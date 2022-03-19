@@ -1,0 +1,1 @@
+const root = 'https://store1management.000webhostapp.com/';

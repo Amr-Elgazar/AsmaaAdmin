@@ -2,16 +2,15 @@ import 'package:asmaaadmin/view/widgets/custom_text.dart';
 import 'package:asmaaadmin/view/widgets/primary_color.dart';
 import 'package:flutter/material.dart';
 
-class ItemDetails extends StatefulWidget {
-  String id , name ,selling , wholesale , installmentPrice ;
-   ItemDetails({Key? key , required this.name , required this.id , required this.installmentPrice , required this.selling , required this.wholesale}) : super(key: key);
+class ItemHeader extends StatefulWidget {
+
+  ItemHeader({Key? key}) : super(key: key);
 
   @override
-  State<ItemDetails> createState() => _ItemDetailsState();
+  State<ItemHeader> createState() => _ItemHeaderState();
 }
 
-class _ItemDetailsState extends State<ItemDetails> {
-
+class _ItemHeaderState extends State<ItemHeader> {
 
   @override
   Widget build(BuildContext context) {
@@ -23,34 +22,34 @@ class _ItemDetailsState extends State<ItemDetails> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CustomText(text: widget.name.replaceAll('"', ''),fontSize: 20,)
+              CustomText(text: 'اسم السلعه',color: primaryColor,fontSize: 25,),
             ],
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CustomText(text: '${int.parse(widget.selling.replaceAll('"', ''))}',fontSize: 20,)
+              CustomText(text: 'السعر',color: primaryColor,fontSize: 25,),
             ],
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CustomText(text: '${int.parse(widget.id.replaceAll('"', ''))}',fontSize: 20,)
+              CustomText(text: 'الرقم',color: primaryColor,fontSize: 25,),
             ],
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CustomText(text: '${int.parse(widget.installmentPrice.replaceAll('"', ''))}',fontSize: 20,)
+              CustomText(text: 'سعر القسط',color: primaryColor,fontSize: 25,),
             ],
           ),
           Column(
             children: [
-              CustomText(text: '30 قطعه',fontSize: 20,)
-            ],
-          ),
-    IconButton(onPressed: (){}, icon: Icon(Icons.remove,size: 35,))
+              CustomText(text: 'متبقي',color: primaryColor,fontSize: 25,),
 
+            ],
+          ),
+          IconButton(onPressed: (){}, icon: Icon(Icons.remove,size: 35,))
         ],
       ),
     );

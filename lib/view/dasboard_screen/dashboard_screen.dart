@@ -1,3 +1,4 @@
+import 'package:asmaaadmin/Api/api.dart';
 import 'package:asmaaadmin/view/dasboard_screen/widgets/add_screen.dart';
 import 'package:asmaaadmin/view/dasboard_screen/widgets/itemDetails.dart';
 import 'package:asmaaadmin/view/dasboard_screen/widgets/itemList.dart';
@@ -15,6 +16,7 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -24,6 +26,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
+
           title: Row(children: [
             CustomText(text: 'اسماء',
               color: primaryColor,
@@ -38,7 +41,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         body: Column(
           children: [
             AddScreen(),
-            ItemDetails(),
+           // ItemDetails(),
             SizedBox(height: 5,),
             Divider(color: Colors.black,),
             ItemList(),
