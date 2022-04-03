@@ -3,53 +3,107 @@ import 'package:asmaaadmin/view/widgets/primary_color.dart';
 import 'package:flutter/material.dart';
 
 class ItemHeader extends StatefulWidget {
-
-  ItemHeader({Key? key}) : super(key: key);
+  String invoiceType;
+  ItemHeader({Key? key , required this.invoiceType}) : super(key: key);
 
   @override
   State<ItemHeader> createState() => _ItemHeaderState();
 }
 
 class _ItemHeaderState extends State<ItemHeader> {
-
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10,right: 30,left: 30),
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+          Expanded(
+              child: Row(
             children: [
-              CustomText(text: 'اسم السلعه',color: primaryColor,fontSize: 25,),
+              Expanded(
+                  child: Container(
+                      padding: const EdgeInsets.all(5.0),
+                      color: Colors.blue,
+                      child: CustomText(
+                        text: 'إسم السلعه',
+                        color: Colors.white,
+                        fontSize: 16,
+                      ))),
+              Expanded(
+                  child: Container(
+                      padding: const EdgeInsets.all(5.0),
+                      color: Colors.blue,
+                      child: CustomText(
+                        text: 'الرقم',
+                        color: Colors.white,
+                        fontSize: 16,
+                      ))),
             ],
+          )),
+          Visibility(
+            visible: widget.invoiceType.contains('قسط'),
+            child: Expanded(
+                child: Container(
+                    padding: const EdgeInsets.all(5.0),
+                    color: Colors.blue,
+                    child: CustomText(
+                      text: 'سعر القسط',
+                      color: Colors.white,
+                      fontSize: 16,
+                    ))),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              CustomText(text: 'السعر',color: primaryColor,fontSize: 25,),
-            ],
+          Visibility(
+            visible: widget.invoiceType.contains('جملة') || widget.invoiceType.contains('كاش'),
+            child: Expanded(
+              child: Row(
+                children: [
+                  Expanded(
+                      child: Container(
+                          padding: const EdgeInsets.all(5.0),
+                          color: Colors.blue,
+                          child: CustomText(
+                            text: 'سعر البيع',
+                            color: Colors.white,
+                            fontSize: 16,
+                          ))),
+                  Expanded(
+                      child: Container(
+                          padding: const EdgeInsets.all(5.0),
+                          color: Colors.blue,
+                          child: CustomText(
+                            text: 'سعر الجملة',
+                            color: Colors.white,
+                            fontSize: 16,
+                          ))),
+                ],
+              ),
+            ),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              CustomText(text: 'الرقم',color: primaryColor,fontSize: 25,),
-            ],
+          Expanded(
+            child: Row(
+              children: [
+                Expanded(
+                    child: Container(
+                        padding: const EdgeInsets.all(5.0),
+                        color: Colors.blue,
+                        child: CustomText(
+                          text: 'متبقي',
+                          color: Colors.white,
+                          fontSize: 16,
+                        ))),
+                Expanded(
+                    child: Container(
+                        padding: const EdgeInsets.all(5.0),
+                        color: Colors.blue,
+                        child: CustomText(
+                          text: 'إضافة المنتج الي الفاتورة',
+                          color: Colors.white,
+                          fontSize: 16,
+                        ))),
+              ],
+            ),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              CustomText(text: 'سعر القسط',color: primaryColor,fontSize: 25,),
-            ],
-          ),
-          Column(
-            children: [
-              CustomText(text: 'متبقي',color: primaryColor,fontSize: 25,),
-
-            ],
-          ),
-          IconButton(onPressed: (){}, icon: Icon(Icons.remove,size: 35,))
         ],
       ),
     );
