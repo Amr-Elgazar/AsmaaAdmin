@@ -1,7 +1,11 @@
-import 'package:asmaaadmin/view/widgets/custom_text.dart';
-import 'package:asmaaadmin/view/widgets/custom_text_form_field.dart';
-import 'package:asmaaadmin/view/widgets/primary_color.dart';
+
 import 'package:flutter/material.dart';
+
+import '../../Api/api.dart';
+import '../../Modules/all_orders.dart';
+import '../../Modules/order_model.dart';
+import '../../core/size_config.dart';
+import 'item_order.dart';
 
 class installmentPayment extends StatefulWidget {
   const installmentPayment({Key? key}) : super(key: key);
@@ -11,41 +15,133 @@ class installmentPayment extends StatefulWidget {
 }
 
 class _installmentPaymentState extends State<installmentPayment> {
+
+  ShowOrders? showOrders;
+  List<Order> ourOrders = [],ourOrders2 = [];
+  bool isLoading = false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    ServData.getOurOrders().then((value) {
+
+        showOrders = value;
+        showOrders?.orders.forEach((element) {
+          if(element.invoiceType == 'قسط'){
+            setState(() {
+            ourOrders.add(element) ;
+            ourOrders2.add(element) ;
+
+            });
+          }
+
+
+        isLoading = true;
+      });
+    });
+  }
+
+
+  void filterSearch(String query) {
+    List<Order> dummyData = ourOrders2;
+    if (query.isNotEmpty) {
+      List<Order> resultSearchProduct = [];
+      for (int x = 0; x < dummyData.length; x++) {
+        if (dummyData[x]
+            .name
+            .replaceAll('"', '')
+            .toLowerCase()
+            .contains(query.toLowerCase())) {
+          resultSearchProduct.add(dummyData[x]);
+        }else  if (dummyData[x]
+            .phone
+            .replaceAll('"', '')
+            .toLowerCase()
+            .contains(query.toLowerCase())) {
+          resultSearchProduct.add(dummyData[x]);
+        }
+      }
+      setState(() {
+        ourOrders = resultSearchProduct;
+      });
+      return;
+    } else {
+      setState(() {
+        ourOrders = [];
+        ourOrders = ourOrders2;
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
-    return Directionality(
+    SizeConfig().init(context);
+    return isLoading
+        ? Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: primaryColor,
-          title: Text('تسديد أقساط'),
+          title: const Text('تسديد إقساط'),
+          centerTitle: true ,
         ),
-        body: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: CustomTextFormField(text: 'رقم الهاتف'),
-            ),
-            CustomText(text: 'الاسم : عمرو احمد محمد',fontSize: 20,),
-            SizedBox(height: 10,),
-            CustomText(text: 'رقم الهاتف : 01030691425',fontSize: 20,),
-            SizedBox(height: 10,),
-            CustomText(text: 'العنوان : عزبه بكري اما دار المناسبات',fontSize: 20,),
-            SizedBox(height: 10,),
-            CustomText(text: 'اسم الضامن : عمرو احمد محمد',fontSize: 20,),
-            SizedBox(height: 10,),
-            CustomText(text: 'رقم الهاتف : 01030691425',fontSize: 20,),
-            SizedBox(height: 10,),
-            Material(
-              elevation: 10,
-                child: CustomText(text: 'باقي المبلغ : 2345',fontSize: 20,fontWeight: FontWeight.bold,)),
-            SizedBox(height: 10,),
-            Material(
-                elevation: 10,
-                child: CustomText(text: 'المطلوب سداده : 500',fontSize: 20,fontWeight: FontWeight.bold,)),
-          ],
+        body: Container(
+          width: SizeConfig.screenWidth!,
+          height: SizeConfig.screenHeight!,
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  onChanged: (v){
+                    if(v.isEmpty){
+                      setState(() {
+                        ourOrders = ourOrders2;
+                      });
+                    }else{
+                      filterSearch(v);
+                    }
+                  },
+                  decoration: const InputDecoration(
+                      labelText: 'بحث بإسم العميل أو الضامن رقم هاتف العميل أو الضامن',
+                      border: OutlineInputBorder(),
+                      suffixIcon: Icon(Icons.search),
+
+                  ),
+
+                ),
+              ),
+              ourOrders.isEmpty? Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Text('لا يوجد أي طلبات متاحة الآن')
+                  ],
+                ),
+              ):Expanded(
+                child: ListView.builder(
+                    itemCount: ourOrders.isEmpty ? 0 : ourOrders.length,
+                    itemBuilder: (context, index) {
+                      return OrderItem(orders: ourOrders[index]);
+                    }),
+              ),
+            ],
+          ),
         ),
+      ),
+    )
+        : Center(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const [
+          CircularProgressIndicator(
+            color: Colors.blue,
+          ),
+          Text('إنتظر جاري تجهيز الطلبات')
+        ],
       ),
     );
   }
+
+
 }

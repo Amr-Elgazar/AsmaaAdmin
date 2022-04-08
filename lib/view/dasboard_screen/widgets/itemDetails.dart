@@ -135,7 +135,12 @@ class _ItemDetailsState extends State<ItemDetails> {
 
   void onPressed() {
     setState(() {
-
+      if(widget.products.productNum == '0'){
+        _showErrorDialog(
+            'لايمكن إضافة هذا المنتج لعدم توفره بالمخازن',
+            'نظام الفاتورة',
+            context);
+      }else{
         if (product.isEmpty) {
           if (widget.invoiceType == 'كاش' || widget.invoiceType == 'جملة') {
             if(_radioChooseSection !=0) {
@@ -238,6 +243,8 @@ class _ItemDetailsState extends State<ItemDetails> {
           }
 
         }
+      }
+
 
     });
   }

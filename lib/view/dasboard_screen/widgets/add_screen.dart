@@ -6,15 +6,14 @@ import 'package:asmaaadmin/view/dasboard_screen/widgets/item_header.dart';
 import 'package:asmaaadmin/view/installment_payment/installment_payment.dart';
 import 'package:asmaaadmin/view/widgets/custom_button.dart';
 import 'package:asmaaadmin/view/widgets/custom_text.dart';
-import 'package:asmaaadmin/view/widgets/custom_text_form_field.dart';
 import 'package:asmaaadmin/view/widgets/primary_color.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class AddScreen extends StatefulWidget {
   final Function(List<Products> products, List<int> qtys, List<double> prices)getData;
  final Function(String type)getType;
+  final Function(String invoice)getInvoice;
   String invoiceType ;
   List<Products> products;
   List<int> qty;
@@ -29,6 +28,7 @@ class AddScreen extends StatefulWidget {
       required this.products,
       required this.qty,
       required this.invoiceType,
+      required this.getInvoice,
       required this.ids,
       required this.price,
       required this.getType})
@@ -42,6 +42,7 @@ class _AddScreenState extends State<AddScreen> {
   List<Products> product = [], product2 = [];
 
   String invoiceType = 'كاش';
+  String invoice = 'بيع';
 
   @override
   void initState() {
@@ -289,12 +290,15 @@ class _AddScreenState extends State<AddScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  CustomButton(
-                    text: CustomText(
-                      text: 'إضافة صنف',
+                  Visibility(
+                    visible: invoice == 'بيع',
+                    child: CustomButton(
+                      text: CustomText(
+                        text: 'إضافة صنف',
+                      ),
+                      icon: const Icon(Icons.add),
+                      onPress: () => _showMyDialogAdd(),
                     ),
-                    icon: const Icon(Icons.payment_outlined),
-                    onPress: () => _showMyDialogAdd(),
                   ),
                   CustomButton(
                     text: CustomText(
@@ -309,12 +313,15 @@ class _AddScreenState extends State<AddScreen> {
                       );
                     },
                   ),
-                  CustomButton(
-                    text: CustomText(
-                      text: 'إرجاع صنف',
+                  Visibility(
+                    visible: invoice=='مرتجع',
+                    child: CustomButton(
+                      text: CustomText(
+                        text: 'إرجاع صنف',
+                      ),
+                      icon: const Icon(Icons.remove),
+                      onPress: () => _showMyDialogRemove(),
                     ),
-                    icon: const Icon(Icons.payment_outlined),
-                    onPress: () => _showMyDialogRemove(),
                   ),
                   Container(
                     alignment: Alignment.topRight,
@@ -345,6 +352,43 @@ class _AddScreenState extends State<AddScreen> {
                       items: <String>[
                         'كاش',
                         'قسط',
+                      ].map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                  Container(
+                    alignment: Alignment.topRight,
+                    width: 200,
+                    child: DropdownButton<String>(
+                      value: invoice,
+                      icon: const Icon(Icons.arrow_downward),                      elevation: 16,
+                      style: const TextStyle(color: primaryColor, fontSize: 15),
+                      underline: Container(
+                        height: 2,
+                        color: primaryColor,
+                      ),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          if(newValue != invoice){
+                            if(newValue == 'بيع'&& widget.products.isNotEmpty){
+                              _showErrorDialog('عذرا لا يمكن تغيير نوع الفاتورة من فضلك قم بحذف جميع المنتجات أولا', 'الدعم فني', context);
+                            }else if(newValue == 'مرتجع'&& widget.products.isNotEmpty){
+                              _showErrorDialog('عذرا لا يمكن تغيير نوع الفاتورة من فضلك قم بحذف جميع المنتجات أولا', 'الدعم فني', context);
+                            }else{
+                              invoice = newValue!;
+                              widget.getInvoice(invoice);
+                            }
+                          }
+
+                        });
+                      },
+                      items: <String>[
+                        'بيع',
+                        'مرتجع',
                       ].map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
