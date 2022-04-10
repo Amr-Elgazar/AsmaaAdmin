@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:asmaaadmin/Constants/const.dart';
 import 'package:asmaaadmin/Modules/products_model.dart';
 import 'package:asmaaadmin/Modules/section_model.dart';
+import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 
 import '../Modules/all_orders.dart';
@@ -41,6 +42,8 @@ class ServData {
   static Future<String> SendOrder({
     required String name,
     required String phone,
+    required String nameG,
+    required String phoneG,
     required String invoiceType,
     required String amountPaid,
     required int productNum,
@@ -51,10 +54,15 @@ class ServData {
     required String discount,
   }) async {
     String baseUrl = root + 'orders.php';
+    final DateTime now = DateTime.now();
+    final DateFormat formatter = DateFormat('yyyy/MM/dd');
+    final String formatted = formatter.format(now);
     var map = {
       'action': 'SendOrder',
       'nameCustomer': name,
       'phone': phone,
+      'nameCustomerG': name,
+      'phoneG': phone,
       'invoiceType': invoiceType,
       'amountPaid': amountPaid,
       'productNum': jsonEncode(productNum),
@@ -63,6 +71,8 @@ class ServData {
       'qty': jsonEncode(qty),
       'price': jsonEncode(prices),
       'discount': discount,
+      'created_at': formatted,
+      'updated_at': formatted,
     };
     var response = await http.post(Uri.parse(baseUrl), body: map);
     if (response.statusCode == 200) {
@@ -104,6 +114,9 @@ class ServData {
     required String discount,
   }) async {
     String baseUrl = root + 'orders.php';
+    final DateTime now = DateTime.now();
+    final DateFormat formatter = DateFormat('yyyy/MM/dd');
+    final String formatted = formatter.format(now);
     var map = {
       'action': 'ReturnOrder',
       'nameCustomer': name,
@@ -116,6 +129,7 @@ class ServData {
       'qty': jsonEncode(qty),
       'price': jsonEncode(prices),
       'discount': discount,
+      'created_at': formatted,
     };
     var response = await http.post(Uri.parse(baseUrl), body: map);
     if (response.statusCode == 200) {

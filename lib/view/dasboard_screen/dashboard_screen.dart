@@ -285,6 +285,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ServData.SendOrder(
             name: controllerName.text,
             phone: '',
+            nameG: '',
+            phoneG: '',
             invoiceType: invoiceType,
             amountPaid: controllerAmountPaid.text,
             productNum: productCount,
@@ -316,6 +318,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ServData.SendOrder(
             name: controllerName.text,
             phone: controllerPhone.text,
+            nameG: '',
+            phoneG: '',
             invoiceType: invoiceType,
             amountPaid: controllerAmountPaid.text,
             productNum: productCount,
@@ -353,6 +357,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ServData.SendOrder(
             name: controllerName.text,
             phone: controllerPhone.text,
+            nameG: controllerNameGuarantor.text,
+            phoneG: controllerPhoneGuarantor.text,
             invoiceType: invoiceType,
             amountPaid: controllerAmountPaid.text,
             productNum: productCount,
@@ -520,12 +526,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
       productCount = 0;
       controllerName.clear();
       controllerPhone.clear();
+      controllerNameGuarantor.clear();
+      controllerPhoneGuarantor.clear();
       controllerAmountPaid.clear();
       controllerDiscount.clear();
     });
   }
 
-// //to Create pdf and save to phone
+//to Create pdf and save to phone
   Future<void> _createPDF() async {
     var name = controllerName.text;
 
@@ -540,7 +548,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     //Draw rectangle
     page.graphics.drawRectangle(
         bounds: Rect.fromLTWH(0, 0, pageSize.width, pageSize.height),
-        pen: PdfPen(PdfColor(142, 170, 219, 255)));
+        pen: PdfPen.fromBrush(PdfBrushes.black));
     //Generate PDF grid.
 
     final PdfGrid grid = getGrid();
@@ -550,7 +558,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       //Draw grid
       drawGrid(page, grid, result);
       //Add invoice footer
-      //drawFooter(page, pageSize);
+      drawFooter(page, pageSize);
     }).whenComplete(() {
       //Save and launch the document
       final List<int> bytes = document.save();
@@ -569,15 +577,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
     var phone = controllerPhone.text;
     var nameG = controllerNameGuarantor.text ;
     var phoneG = controllerPhoneGuarantor.text;
-    var amountPaid = controllerAmountPaid.text;
-    var discount = controllerDiscount.text;
+
     //Draw rectangle
     List<int> dataFont = File('assets/fonts/Arial.ttf').readAsBytesSync();
 
     final PdfFont contentFont2 =
-        PdfTrueTypeFont(File('assets/fonts/Arial.ttf').readAsBytesSync(), 18);
+    PdfTrueTypeFont(File('assets/fonts/Arial.ttf').readAsBytesSync(), 18);
     final PdfFont contentFont =
-        PdfTrueTypeFont(File('assets/fonts/Arial.ttf').readAsBytesSync(), 12);
+    PdfTrueTypeFont(File('assets/fonts/Arial.ttf').readAsBytesSync(), 12);
 
     //Draw string
 
@@ -597,59 +604,64 @@ class _DashboardScreenState extends State<DashboardScreen> {
     //Create data format and convert it to text.
     final String invoiceNumber = 'Customer Information';
     final Size contentSize = contentFont.measureString(invoiceNumber);
-    String address = '\n\n الإسم : $name \n\n رقم الهاتف : $phone \n\n  إسم الضامن : $nameG \n\n رقم هاتف الضامن : $phoneG \n\n الخصم : $discount \n\n المبلغ المدفوع : $amountPaid \n\n الإجمالي : $total ';
+
+    String address =
+    invoiceType == 'كاش' ?'\n\n الإسم : $name'+ '\n\n'+'رقم الهاتف : $phone'
+        :'\n\n الإسم : $name \n\n رقم الهاتف : $phone \n\n  إسم الضامن : $nameG \n\n رقم هاتف الضامن : $phoneG   ';
 
     PdfTextElement(
-            text: invoiceType,
-            font: PdfTrueTypeFont(
-                File('assets/fonts/Arial.ttf').readAsBytesSync(), 14),
-            brush: PdfBrushes.white,
-            format: PdfStringFormat(
-                textDirection: PdfTextDirection.rightToLeft,
-                alignment: PdfTextAlignment.right,
-                paragraphIndent: 35))
+        text: invoiceType,
+        font: PdfTrueTypeFont(
+            File('assets/fonts/Arial.ttf').readAsBytesSync(), 14),
+        brush: PdfBrushes.white,
+        format: PdfStringFormat(
+            textDirection: PdfTextDirection.rightToLeft,
+            alignment: PdfTextAlignment.right,
+            paragraphIndent: 35))
         .draw(
-            page: page,
-            bounds: Rect.fromLTWH(
-              390,
-              40,
-              pageSize.width - 400,
-              33,
-            ));
+        page: page,
+        bounds: Rect.fromLTWH(
+          390,
+          40,
+          pageSize.width - 400,
+          33,
+        ));
 
     PdfTextElement(
-            text: '\nبيانات الفاتورة\n',
-            font: PdfTrueTypeFont(
-                File('assets/fonts/Arial.ttf').readAsBytesSync(), 15,
-                style: PdfFontStyle.bold),
-            brush: PdfBrushes.darkBlue,
-            format: PdfStringFormat(
-                textDirection: PdfTextDirection.rightToLeft,
-                alignment: PdfTextAlignment.right,
-                paragraphIndent: 35))
+        text: '\nبيانات الفاتورة\n',
+        font: PdfTrueTypeFont(
+            File('assets/fonts/Arial.ttf').readAsBytesSync(), 15,
+            style: PdfFontStyle.bold),
+        brush: PdfBrushes.darkBlue,
+        format: PdfStringFormat(
+            textDirection: PdfTextDirection.rightToLeft,
+            alignment: PdfTextAlignment.right,
+            paragraphIndent: 35))
         .draw(
-            page: page,
-            bounds: Rect.fromLTWH(
-                170,
-                90,
-                pageSize.width - (contentSize.width + 30),
-                pageSize.height - 120));
+        page: page,
+        bounds: Rect.fromLTWH(
+            170,
+            90,
+            pageSize.width - (contentSize.width + 30),
+            pageSize.height - 120));
 
     return PdfTextElement(
-            text: address,
-            font: PdfTrueTypeFont(
-                File('assets/fonts/Arial.ttf').readAsBytesSync(), 10),
-            format: PdfStringFormat(
-                textDirection: PdfTextDirection.rightToLeft,
-                alignment: PdfTextAlignment.right,
-                paragraphIndent: 15))
+        text: address,
+        font: PdfTrueTypeFont(
+            File('assets/fonts/Arial.ttf').readAsBytesSync(), 10),
+        format: PdfStringFormat(
+            textDirection: PdfTextDirection.rightToLeft,
+            alignment: PdfTextAlignment.right,
+            paragraphIndent: 15))
         .draw(
-            page: page,
-            bounds: Rect.fromLTWH(
-                150,
-                120,
-                pageSize.width - (contentSize.width + 30),
-                pageSize.height - 120));
+        page: page,
+        bounds: Rect.fromLTWH(
+            150,
+            120,
+            pageSize.width - (contentSize.width + 30),
+            pageSize.height - 120));
+
+
   }
 
   //Create PDF Table and return
@@ -763,31 +775,72 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   //create footer on pdf
-// void drawFooter(PdfPage page, Size pageSize) async{
-//   final PdfPen linePen = PdfPen(PdfColor(142, 170, 219, 255), dashStyle: PdfDashStyle.custom);
-//   linePen.dashPattern = <double>[3, 3];
-//   //Draw line
+  void drawFooter(PdfPage page, Size pageSize) async{
+    var amountPaid = controllerAmountPaid.text;
+    var discount = controllerDiscount.text;
+    final PdfPen linePen = PdfPen(PdfColor(142, 170, 219, 255), dashStyle: PdfDashStyle.custom);
+    linePen.dashPattern = <double>[3, 3];
 
-//   page.graphics.drawLine(linePen, Offset(0, pageSize.height - 100),
-//       Offset(pageSize.width, pageSize.height - 100));
+    String footerContent = 'الخصم : $discount '+'      '+ 'المبلغ المدفوع : $amountPaid' +'     '  +'الإجمالي : $total';
+    PdfFont font = PdfTrueTypeFont(File('assets/fonts/Arial.ttf').readAsBytesSync(), 12);
+    //Added 30 as a margin for the layout.d
+    if(discount != '') {
+      page.graphics.drawString(
+          'الإجمالي  : $total',
+          font,
+          brush: PdfBrushes.black,
+          format: PdfStringFormat(
+              textDirection: PdfTextDirection.rightToLeft,
+              alignment: PdfTextAlignment.right,
+              paragraphIndent: 25),
+          bounds:
+          Rect.fromLTWH(130, pageSize.height - 60, 0, 0));
 
-//   const String footerContent = '';
-//   List<int>dataFont = File('assets/fonts/Arial.ttf').readAsBytesSync();
-//   PdfFont font = PdfTrueTypeFont(File('assets/fonts/Arial.ttf').readAsBytesSync(), 12);
-//   //Added 30 as a margin for the layout.
+      page.graphics.drawString(
+          'الخصم :  $discount',
+          font,
+          brush: PdfBrushes.black,
+          format: PdfStringFormat(
+              textDirection: PdfTextDirection.rightToLeft,
+              alignment: PdfTextAlignment.right,
+              paragraphIndent: 25),
+          bounds:
+          Rect.fromLTWH(pageSize.width - 150, pageSize.height - 60, 0, 0));
 
-//   page.graphics.drawString(footerContent,
-//       font,
-//       brush: PdfBrushes.darkBlue,
-//       format: PdfStringFormat(alignment: PdfTextAlignment.center),
-//       bounds:
-//       Rect.fromLTWH(pageSize.width - 270, pageSize.height - 60, 0, 0));
-// }
+      page.graphics.drawString(
+          'المبلغ المدفوع : $amountPaid',
+          font,
+          brush: PdfBrushes.black,
+          format: PdfStringFormat(
+              textDirection: PdfTextDirection.rightToLeft,
+              alignment: PdfTextAlignment.right,
+              paragraphIndent: 25),
+          bounds:
+          Rect.fromLTWH(pageSize.width, pageSize.height - 60, 0, 0));
+    }else{
+      page.graphics.drawString(
+          'الإجمالي  : $total',
+          font,
+          brush: PdfBrushes.black,
+          format: PdfStringFormat(
+              textDirection: PdfTextDirection.rightToLeft,
+              alignment: PdfTextAlignment.right,
+              paragraphIndent: 25),
+          bounds:
+          Rect.fromLTWH(230, pageSize.height - 60, 0, 0));
 
-// Future<List<int>> _readFontData() async {
-//   final ByteData bytes = await rootBundle.load('assets/fonts/Arial.ttf');
-//   return bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes);
-// }
+      page.graphics.drawString(
+          'المبلغ المدفوع : $amountPaid',
+          font,
+          brush: PdfBrushes.black,
+          format: PdfStringFormat(
+              textDirection: PdfTextDirection.rightToLeft,
+              alignment: PdfTextAlignment.right,
+              paragraphIndent: 25),
+          bounds:
+          Rect.fromLTWH(pageSize.width-100, pageSize.height - 60, 0, 0));
+    }
+  }
 
   void _showSuccessDialog(BuildContext context) {
     AwesomeDialog(
