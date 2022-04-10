@@ -273,8 +273,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (invoiceType == 'كاش' || invoiceType == 'جملة') {
       setState(() {
         if(controllerDiscount.text.isNotEmpty){
-          controllerAmountPaid.text = '${(total * (double.parse(controllerDiscount.text)))}';
+          controllerAmountPaid.text = '${(total * (double.parse(controllerDiscount.text)/100))}';
+          setState(() {
+            total = (total * (double.parse(controllerDiscount.text)/100));
+          });
         }else{
+
           controllerAmountPaid.text = '$total';
         }
       });
