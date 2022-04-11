@@ -8,13 +8,11 @@ import 'package:asmaaadmin/view/dasboard_screen/widgets/invoice_header.dart';
 import 'package:asmaaadmin/view/dasboard_screen/widgets/itemList.dart';
 import 'package:asmaaadmin/view/widgets/custom_button.dart';
 import 'package:asmaaadmin/view/widgets/custom_text.dart';
-import 'package:asmaaadmin/view/widgets/custom_text_form_field.dart';
 import 'package:asmaaadmin/view/widgets/primary_color.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:open_file/open_file.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
+import 'package:intl/intl.dart' as date;
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({Key? key}) : super(key: key);
@@ -235,6 +233,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       invoiceType = type;
     });
   }
+
   getInvoice(String invoice) {
     setState(() {
       invoices = invoice;
@@ -401,7 +400,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (invoiceType == 'كاش' || invoiceType == 'جملة') {
       setState(() {
         if(controllerDiscount.text.isNotEmpty){
-          controllerAmountPaid.text = '${(total * (double.parse(controllerDiscount.text)))}';
+          controllerAmountPaid.text = '${(total * (double.parse(controllerDiscount.text)/100))}';
+          setState(() {
+            total = (total * (double.parse(controllerDiscount.text)/100));
+          });
         }else{
           controllerAmountPaid.text = '$total';
         }
@@ -537,7 +539,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
-//to Create pdf and save to phone
+  //to Create pdf and save to phone
   Future<void> _createPDF() async {
     var name = controllerName.text;
 
@@ -575,8 +577,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   //to draw Header on pdf
-  Future<PdfLayoutResult?> drawHeader(
-      PdfPage page, Size pageSize, PdfGrid grid) async {
+  Future<PdfLayoutResult?> drawHeader(PdfPage page, Size pageSize, PdfGrid grid) async {
     var name = controllerName.text;
     var phone = controllerPhone.text;
     var nameG = controllerNameGuarantor.text ;
@@ -586,16 +587,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
     List<int> dataFont = File('assets/fonts/Arial.ttf').readAsBytesSync();
 
     final PdfFont contentFont2 =
-    PdfTrueTypeFont(File('assets/fonts/Arial.ttf').readAsBytesSync(), 18);
+    PdfTrueTypeFont(File('assets/fonts/Arial.ttf').readAsBytesSync(), 35);
     final PdfFont contentFont =
-    PdfTrueTypeFont(File('assets/fonts/Arial.ttf').readAsBytesSync(), 12);
+    PdfTrueTypeFont(File('assets/fonts/Arial.ttf').readAsBytesSync(), 25);
 
     //Draw string
 
     page.graphics.drawString('أسماء', contentFont2,
         brush: PdfBrushes.black,
         bounds: Rect.fromLTWH(
-          400,
+          200,
           50,
           pageSize.width - 400,
           33,
@@ -608,10 +609,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
     //Create data format and convert it to text.
     final String invoiceNumber = 'Customer Information';
     final Size contentSize = contentFont.measureString(invoiceNumber);
+    final DateTime now = DateTime.now();
+    final date.DateFormat formatter = date.DateFormat('yyyy/MM/dd');
+    final String formatted = formatter.format(now);
 
     String address =
-    invoiceType == 'كاش' ?'\n\n الإسم : $name'+ '\n\n'+'رقم الهاتف : $phone'
-        :'\n\n الإسم : $name \n\n رقم الهاتف : $phone \n\n  إسم الضامن : $nameG \n\n رقم هاتف الضامن : $phoneG   ';
+    invoiceType == 'كاش' ?'\n\n الإسم : $name'+ '\n\n'+'رقم الهاتف : $phone'+'\n\n'+' التاريخ : $formatted'
+        :'\n\n الإسم : $name \n\n رقم الهاتف : $phone \n\n  إسم الضامن : $nameG \n\n رقم هاتف الضامن : $phoneG' + '\n\n'+' التاريخ : $formatted';
 
     PdfTextElement(
         text: invoiceType,
@@ -644,7 +648,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         .draw(
         page: page,
         bounds: Rect.fromLTWH(
-            170,
+            200,
             90,
             pageSize.width - (contentSize.width + 30),
             pageSize.height - 120));
@@ -751,8 +755,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
 //Create row for the Table.
-  void addProducts(String productName, String price, String quantity,
-      String total, PdfGrid grid) {
+  void addProducts(String productName, String price, String quantity, String total, PdfGrid grid) {
     PdfGridRow row = grid.rows.add();
     row.style.font =
         PdfTrueTypeFont(File('assets/fonts/Arial.ttf').readAsBytesSync(), 10);
