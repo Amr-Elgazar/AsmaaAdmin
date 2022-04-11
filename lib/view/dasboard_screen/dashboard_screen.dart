@@ -44,7 +44,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   String invoiceType = 'كاش';
   String invoices = 'بيع';
-  double total = 0;
+  double total = 0 , total2 = 0;
   int productCount = 0;
 
   @override
@@ -177,6 +177,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               padding: const EdgeInsets.all(8.0),
                               child: TextFormField(
                                 controller: controllerDiscount,
+                                onChanged: (d){
+                                  if(d.isNotEmpty){
+
+                                  }
+                                },
+                                onEditingComplete: (){
+
+                                },
                                 decoration: const InputDecoration(
                                     labelText: 'الخصم',
                                     border: OutlineInputBorder()),
@@ -246,6 +254,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     for (int x = 0; x < price2.length; x++) {
       setState(() {
         total += (price2[x] * qty2[x]);
+        total2 += (price2[x] * qty2[x]);
         productCount = product.length;
       });
     }
@@ -263,6 +272,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       for (int x = 0; x < price2.length; x++) {
         setState(() {
           total += (price2[x] * qty2[x]);
+          total2 += (price2[x] * qty2[x]);
           productCount = product2.length;
         });
       }
@@ -273,10 +283,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (invoiceType == 'كاش' || invoiceType == 'جملة') {
       setState(() {
         if(controllerDiscount.text.isNotEmpty){
-          controllerAmountPaid.text = '${(total * (double.parse(controllerDiscount.text)/100))}';
-          setState(() {
-            total = (total * (double.parse(controllerDiscount.text)/100));
-          });
+          if(controllerDiscount.text.isNotEmpty) {
+            if(total != (total2 * (double.parse(controllerDiscount.text) / 100))) {
+              controllerAmountPaid.text = '${(total *
+                  (double.parse(controllerDiscount.text) /
+                      100))}';
+              setState(() {
+                total = (total2 * (double.parse(
+                    controllerDiscount.text) / 100));
+              });
+            }
+          }
         }else{
 
           controllerAmountPaid.text = '$total';
@@ -354,6 +371,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
             'نظام الكاش', context);
       }
     } else {
+      setState(() {
+        if(controllerDiscount.text.isNotEmpty){
+          if(controllerDiscount.text.isNotEmpty) {
+            if(total != (total2 * (double.parse(controllerDiscount.text) / 100))) {
+              controllerAmountPaid.text = '${(total *
+                  (double.parse(controllerDiscount.text) /
+                      100))}';
+              setState(() {
+                total = (total2 * (double.parse(
+                    controllerDiscount.text) / 100));
+              });
+            }
+          }
+        }else{
+
+          controllerAmountPaid.text = '$total';
+        }
+      });
       if (controllerName.text.isNotEmpty &&
           product2.isNotEmpty &&
           controllerPhone.text.isNotEmpty &&
@@ -402,11 +437,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (invoiceType == 'كاش' || invoiceType == 'جملة') {
       setState(() {
         if(controllerDiscount.text.isNotEmpty){
-          controllerAmountPaid.text = '${(total * (double.parse(controllerDiscount.text)/100))}';
-          setState(() {
-            total = (total * (double.parse(controllerDiscount.text)/100));
-          });
+          if(controllerDiscount.text.isNotEmpty) {
+            if(total != (total2 * (double.parse(controllerDiscount.text) / 100))) {
+              controllerAmountPaid.text = '${(total *
+                  (double.parse(controllerDiscount.text) /
+                      100))}';
+              setState(() {
+                total = (total2 * (double.parse(
+                    controllerDiscount.text) / 100));
+              });
+            }
+          }
         }else{
+
           controllerAmountPaid.text = '$total';
         }
       });
@@ -478,6 +521,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
             'نظام الكاش', context);
       }
     } else {
+      setState(() {
+        if(controllerDiscount.text.isNotEmpty){
+          if(controllerDiscount.text.isNotEmpty) {
+            if(total != (total2 * (double.parse(controllerDiscount.text) / 100))) {
+              controllerAmountPaid.text = '${(total *
+                  (double.parse(controllerDiscount.text) /
+                      100))}';
+              setState(() {
+                total = (total2 * (double.parse(
+                    controllerDiscount.text) / 100));
+              });
+            }
+          }
+        }else{
+
+          controllerAmountPaid.text = '$total';
+        }
+      });
       if (controllerName.text.isNotEmpty &&
           product2.isNotEmpty &&
           controllerPhone.text.isNotEmpty &&
