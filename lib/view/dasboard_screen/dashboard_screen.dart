@@ -149,6 +149,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 qtys: qty2,
                 prices: price2,
                 updateTotal: updateTotal,
+                invoice: invoices,
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -373,6 +374,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             .then((value) {
           if (value == 'Send Order Success') {
             _createPDF().whenComplete(() {
+
               _showSuccessDialog(context);
             });
           } else {
@@ -551,10 +553,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final PdfPage page = document.pages.add();
     //Get page client size
     final Size pageSize = page.getClientSize();
-    //Draw rectangle
-    page.graphics.drawRectangle(
-        bounds: Rect.fromLTWH(0, 0, pageSize.width, pageSize.height),
-        pen: PdfPen.fromBrush(PdfBrushes.black));
+
     //Generate PDF grid.
 
     final PdfGrid grid = getGrid();
@@ -638,7 +637,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     PdfTextElement(
         text: '\nبيانات الفاتورة\n',
         font: PdfTrueTypeFont(
-            File('assets/fonts/Arial.ttf').readAsBytesSync(), 15,
+            File('assets/fonts/Arial.ttf').readAsBytesSync(), 25,
             style: PdfFontStyle.bold),
         brush: PdfBrushes.darkBlue,
         format: PdfStringFormat(
@@ -656,7 +655,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return PdfTextElement(
         text: address,
         font: PdfTrueTypeFont(
-            File('assets/fonts/Arial.ttf').readAsBytesSync(), 10),
+            File('assets/fonts/Arial.ttf').readAsBytesSync(), 20, style: PdfFontStyle.bold),
         format: PdfStringFormat(
             textDirection: PdfTextDirection.rightToLeft,
             alignment: PdfTextAlignment.right,
@@ -754,7 +753,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         page: page, bounds: Rect.fromLTWH(0, result.bounds.bottom + 40, 0, 0))!;
   }
 
-//Create row for the Table.
+ //Create row for the Table.
   void addProducts(String productName, String price, String quantity, String total, PdfGrid grid) {
     PdfGridRow row = grid.rows.add();
     row.style.font =

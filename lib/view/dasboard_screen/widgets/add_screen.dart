@@ -124,6 +124,7 @@ class _AddScreenState extends State<AddScreen> {
                         child: ListView.builder(
                             itemCount: product.isEmpty ? 0 : product.length,
                             itemBuilder: (context, index) => ItemDetails(
+                              invoice: invoice,
                                   invoiceType: invoiceType,
                                   products2: widget.products,
                                   qty: widget.qty,
@@ -232,6 +233,7 @@ class _AddScreenState extends State<AddScreen> {
                             itemCount: product.isEmpty ? 0 : product.length,
                             itemBuilder: (context, index) => ItemDetails(
                                   invoiceType: invoiceType,
+                                  invoice: invoice,
                                   qty: widget.qty,
                                   price: widget.price,
                                   ids: widget.ids,

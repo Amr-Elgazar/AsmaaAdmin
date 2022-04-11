@@ -9,7 +9,7 @@ class ItemDetails extends StatefulWidget {
   Products products;
   List<Products> products2;
   String invoiceType;
-
+String invoice ;
   List<int> qty;
   List ids ;
   List<double> price;
@@ -24,7 +24,8 @@ class ItemDetails extends StatefulWidget {
       required this.qty,
       required this.price,
       required this.ids,
-      required this.invoiceType})
+      required this.invoiceType,
+      required this.invoice})
       : super(key: key);
 
   @override
@@ -135,15 +136,10 @@ class _ItemDetailsState extends State<ItemDetails> {
 
   void onPressed() {
     setState(() {
-      if(widget.products.productNum == '0'){
-        _showErrorDialog(
-            'لايمكن إضافة هذا المنتج لعدم توفره بالمخازن',
-            'نظام الفاتورة',
-            context);
-      }else{
+      if(widget.invoice== 'مرتجع'){
         if (product.isEmpty) {
           if (widget.invoiceType == 'كاش' || widget.invoiceType == 'جملة') {
-            if(_radioChooseSection !=0) {
+            if (_radioChooseSection != 0) {
               if (!widget.products2.contains(widget.products)) {
                 product.add(widget.products);
                 print(_radioChooseSection);
@@ -193,7 +189,7 @@ class _ItemDetailsState extends State<ItemDetails> {
           }
         } else {
           if (widget.invoiceType == 'كاش' || widget.invoiceType == 'جملة') {
-            if(_radioChooseSection !=0) {
+            if (_radioChooseSection != 0) {
               if (!product.contains(widget.products)) {
                 product.add(widget.products);
                 print(_radioChooseSection);
@@ -241,11 +237,117 @@ class _ItemDetailsState extends State<ItemDetails> {
                   context);
             }
           }
-
+        }
+      }else {
+        if (widget.products.productNum == '0') {
+          _showErrorDialog(
+              'لايمكن إضافة هذا المنتج لعدم توفره بالمخازن',
+              'نظام الفاتورة',
+              context);
+        } else {
+          if (product.isEmpty) {
+            if (widget.invoiceType == 'كاش' || widget.invoiceType == 'جملة') {
+              if (_radioChooseSection != 0) {
+                if (!widget.products2.contains(widget.products)) {
+                  product.add(widget.products);
+                  print(_radioChooseSection);
+                  if (_radioChooseSection == 1) {
+                    widget.price.add(double.parse(
+                        widget.products.sellingPrice.replaceAll('"', '')));
+                    widget.products2.add(widget.products);
+                    qtys = widget.qty;
+                    widget.ids.add(int.parse(widget.products.id));
+                    qtys.add(1);
+                    widget.getData(widget.products2, qtys, widget.price);
+                    _showSuccessDialog(context);
+                  } else if (_radioChooseSection == 2) {
+                    widget.price.add(double.parse(
+                        widget.products.wholesalePrice.replaceAll('"', '')));
+                    widget.products2.add(widget.products);
+                    widget.ids.add(int.parse(widget.products.id));
+                    qtys = widget.qty;
+                    qtys.add(1);
+                    widget.getData(widget.products2, qtys, widget.price);
+                    _showSuccessDialog(context);
+                  }
+                } else {
+                  _showErrorDialog(
+                      'تمت إضافة هذا المنتج إلي الفاتورة من فضلك قم بزيادة الكمية إذا أردت',
+                      'نظام الفاتورة',
+                      context);
+                }
+              }
+            } else {
+              if (!widget.products2.contains(widget.products)) {
+                product.add(widget.products);
+                widget.price.add(double.parse(
+                    widget.products.installmentPrice.replaceAll('"', '')));
+                widget.products2.add(widget.products);
+                widget.ids.add(int.parse(widget.products.id));
+                qtys = widget.qty;
+                qtys.add(1);
+                widget.getData(widget.products2, qtys, widget.price);
+                _showSuccessDialog(context);
+              } else {
+                _showErrorDialog(
+                    'تمت إضافة هذا المنتج إلي الفاتورة من فضلك قم بزيادة الكمية إذا أردت',
+                    'نظام الفاتورة',
+                    context);
+              }
+            }
+          } else {
+            if (widget.invoiceType == 'كاش' || widget.invoiceType == 'جملة') {
+              if (_radioChooseSection != 0) {
+                if (!product.contains(widget.products)) {
+                  product.add(widget.products);
+                  print(_radioChooseSection);
+                  if (_radioChooseSection == 1) {
+                    widget.price.add(double.parse(
+                        widget.products.sellingPrice.replaceAll('"', '')));
+                    widget.products2.add(widget.products);
+                    widget.ids.add(int.parse(widget.products.id));
+                    qtys = widget.qty;
+                    qtys.add(1);
+                    widget.getData(widget.products2, qtys, widget.price);
+                    _showSuccessDialog(context);
+                  } else if (_radioChooseSection == 2) {
+                    widget.price.add(double.parse(
+                        widget.products.wholesalePrice.replaceAll('"', '')));
+                    widget.products2.add(widget.products);
+                    widget.ids.add(int.parse(widget.products.id));
+                    qtys = widget.qty;
+                    qtys.add(1);
+                    widget.getData(widget.products2, qtys, widget.price);
+                    _showSuccessDialog(context);
+                  }
+                } else {
+                  _showErrorDialog(
+                      'تمت إضافة هذا المنتج إلي الفاتورة من فضلك قم بزيادة الكمية إذا أردت',
+                      'نظام الفاتورة',
+                      context);
+                }
+              }
+            } else {
+              if (!product.contains(widget.products)) {
+                product.add(widget.products);
+                widget.price.add(double.parse(
+                    widget.products.installmentPrice.replaceAll('"', '')));
+                widget.products2.add(widget.products);
+                widget.ids.add(int.parse(widget.products.id));
+                qtys = widget.qty;
+                qtys.add(1);
+                widget.getData(widget.products2, qtys, widget.price);
+                _showSuccessDialog(context);
+              } else {
+                _showErrorDialog(
+                    'تمت إضافة هذا المنتج إلي الفاتورة من فضلك قم بزيادة الكمية إذا أردت',
+                    'نظام الفاتورة',
+                    context);
+              }
+            }
+          }
         }
       }
-
-
     });
   }
 

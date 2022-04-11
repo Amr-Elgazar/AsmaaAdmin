@@ -6,11 +6,12 @@ import 'package:flutter/material.dart';
 class ItemList extends StatefulWidget {
   final Function() updateTotal;
   List<Products> products = [];
+  String invoice;
   List<int> qtys = [];
   List ids;
   List<double> prices = [];
 
-  ItemList({Key? key, required this.products , required this.qtys , required this.prices ,required this.updateTotal , required this.ids}) : super(key: key);
+  ItemList({Key? key, required this.products , required this.qtys , required this.prices ,required this.updateTotal , required this.ids, required this.invoice}) : super(key: key);
 
   @override
   State<ItemList> createState() => _ItemListState();
@@ -65,10 +66,16 @@ class _ItemListState extends State<ItemList> {
                             child: IconButton(
                                 onPressed: () {
                                   setState(() {
-                                    if(!(widget.qtys[index] >= int.parse(widget.products[index].productNum.replaceAll('"', '')))){
+                                    if(widget.invoice== 'مرتجع'){
                                       widget.qtys[index]++;
+                                    }else{
+                                      if(!(widget.qtys[index] >= int.parse(widget.products[index].productNum.replaceAll('"', '')))){
+                                        widget.qtys[index]++;
+                                      }
                                     }
+
                                   });
+
                                   widget.updateTotal();
                                 },
                                 icon: const Icon(

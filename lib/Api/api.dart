@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:asmaaadmin/Constants/const.dart';
+import 'package:asmaaadmin/Modules/all_instalments.dart';
 import 'package:asmaaadmin/Modules/products_model.dart';
 import 'package:asmaaadmin/Modules/section_model.dart';
 import 'package:intl/intl.dart';
@@ -61,7 +62,7 @@ class ServData {
       'action': 'SendOrder',
       'nameCustomer': name,
       'phone': phone,
-      'nameCustomerG': name,
+      'nameCustomerG': nameG,
       'phoneG': phone,
       'invoiceType': invoiceType,
       'amountPaid': amountPaid,
@@ -92,6 +93,29 @@ class ServData {
       'action': 'PAID_INSTALLMENT',
       'amountPaid': amountPaid,
       'id': '$id',
+    };
+    var response = await http.post(Uri.parse(baseUrl), body: map);
+    if (response.statusCode == 200) {
+      return response.body;
+    } else {
+      return '';
+    }
+  }
+
+
+  static Future<String> paidINSTALLMENT2({
+    required String amountPaid,
+    required String orderId,
+  }) async {
+    String baseUrl = root + 'orders.php';
+    final DateTime now = DateTime.now();
+    final DateFormat formatter = DateFormat('yyyy/MM/dd');
+    final String formatted = formatter.format(now);
+    var map = {
+      'action': 'ADD_INSTALLMENTS',
+      'amountPaid': amountPaid,
+      'orderId':orderId,
+      'created_at': formatted,
     };
     var response = await http.post(Uri.parse(baseUrl), body: map);
     if (response.statusCode == 200) {
@@ -138,4 +162,16 @@ class ServData {
       return '';
     }
   }
+
+  static Future<AllInstalments?> getInstalments({required id}) async {
+    String baseUrl = root + 'get.php?action=GET_PAIDS&id=$id';
+    var response = await http.get(Uri.parse(baseUrl));
+    if (response.statusCode == 200) {
+      return allInstalmentsFromJson(response.body);
+    } else {
+      return null;
+    }
+  }
+
+
 }
